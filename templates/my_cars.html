@@ -1,5 +1,4 @@
 {% load static %}
-
 <html lang="en">
 
 <head>
@@ -32,8 +31,7 @@
         }
 
         .back {
-            order: 10; /* Измените значение order по необходимости */
-            /* Другие стили для ссылки */
+            order: 10;
         }
 
     </style>
@@ -106,10 +104,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-<!--                        {% if user.is_superuser %}-->
-<!--                           <a href="{% url 'my_cars' %}" class="nav-item nav-link active">My cars</a>-->
-<!--                        {% endif %}-->
-                        <a href="{% url 'my_cars' %}" class="nav-item nav-link active">My cars</a>
+                        <a href="{% url 'add_car' %}" class="nav-item nav-link active">Add car</a>
+                        <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
                         <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
                         <a href="{% url 'service' %}" class="nav-item nav-link">Services</a>
                         <a href="{% url 'package' %}" class="nav-item nav-link">Packages</a>
@@ -130,17 +126,7 @@
                                 <a href="{% url 'blog' %}" class="dropdown-item">Restaurant</a>
                             </div>
                         </div>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Search</a>
-                            <div class="dropdown-menu border-0 rounded-0 m-0">
-                                <form class="form-inline" action="{% url 'search_results' %}" method="GET">
-                                  <input class="form-control mr-sm-2" type="text" name="query" placeholder="Product name" aria-label="Search">
-                                  <button class="btn nav_search-btn" type="submit">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                  </button>
-                                </form>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </nav>
@@ -149,50 +135,43 @@
     <!-- Navbar End -->
 
     {% block content %}
-<div class="container mt-4">
-    <h1>Cars</h1>
-    {% if cars %}
-    <div class="row">
-        {% for car in cars %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-img-top">
-                    {% if car.image %}
-                    <img src="{{ car.image.url }}" alt="{{ car.name }}" style="max-height: 400px; width: 100%; object-fit: center;">
-                    {% else %}
-                    <div style="height: 200px; background-color: #eee;"></div>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ car.name }}</h5>
-                    <p class="card-text">Price: {{ car.price }} $</p>
-                    <form method="post" action="{% url 'add_to_payment' car.id %}">
-                        {% csrf_token %}
-                        <label for="rental_date">Until what date:</label>
-                        <input type="datetime-local" id="rental_date" name="rental_date" required>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-money"></i> Book Now
-                        </button>
-                    </form>
+    <div class="container mt-4">
+        <h1>Cars</h1>
+        {% if cars %}
+        <div class="row">
+            {% for car in cars %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-img-top">
+                        {% if car.image %}
+                        <img src="{{ car.image.url }}" alt="{{ car.name }}" style="max-height: 400px; width: 100%; object-fit: center;">
+                        {% else %}
+                        <div style="height: 200px; background-color: #eee;"></div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.name }}</h5>
+                        <p class="card-text">Price: {{ car.price }} $</p>
+                        <form method="post" action="{% url 'delete_car' car.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <p>No cars</p>
+        {% endif %}
     </div>
-    {% else %}
-    <p>No cars</p>
-    {% endif %}
-</div>
 {% endblock %}
 <div class="conta">
-    <a href="{% url 'index' %}" class="btn btn-success back">
+    <a href="{% url 'car' %}" class="btn btn-success back">
         <i class="fas fa-arrow-left"></i> Back
     </a>
     <!-- Другие элементы -->
 </div>
-
-
-
 
 
     <!-- Footer Start -->

@@ -2,6 +2,7 @@ import decimal
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.sessions.models import Session
+from django.db.models import Q
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render, redirect, get_object_or_404
@@ -70,6 +71,25 @@ class TestimonialView(TemplateView):
     template_name = 'testimonial.html'
 
 
+# @login_required
+# def add_car(request):
+#     if request.method == 'POST':
+#         form = CarForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             car = form.save(commit=False)
+#             car.user = request.user
+#
+#             if 'image' in request.FILES:
+#                 car.image = request.FILES['image']
+#
+#             car.save()
+#
+#             return redirect('my_cars')
+#         else:
+#             print("Форма недействительна:", form.errors)
+#     else:
+#         form = CarForm()
+#     return render(request, 'add_car.html', {'form': form})
 @login_required
 def add_car(request):
     if request.method == 'POST':
@@ -80,6 +100,9 @@ def add_car(request):
 
             if 'image' in request.FILES:
                 car.image = request.FILES['image']
+
+            if request.user.is_superuser:  # Если суперпользователь, делаем машину видимой для всех
+                car.visibility = 'all'
 
             car.save()
 
@@ -99,9 +122,17 @@ def my_cars(request):
     return render(request, 'my_cars.html', {'cars': cars})
 
 
-def cars(request):
+# def cars(request):
+#
+#     cars = TouristPlace.objects.filter(user=request.user)
+#
+#     return render(request, 'car.html', {'cars': cars})
 
-    cars = TouristPlace.objects.filter(user=request.user)
+
+def cars(request):
+    # Получить все машины, которые либо принадлежат текущему пользователю,
+    # либо видны для всех (is_shared=True)
+    cars = TouristPlace.objects.filter(Q(user=request.user) | Q(visibility='all'))
 
     return render(request, 'car.html', {'cars': cars})
 
@@ -123,13 +154,11 @@ def search_results_view(request):
 
 @login_required(login_url='login/')
 def profile_view(request):
-    # Получите список машин в корзине из сессии
+
     cars_in_cart = request.session.get('cars_in_cart', [])
 
-    # Создайте список объектов TouristPlace, соответствующих машинам в корзине
     myitems = TouristPlace.objects.filter(pk__in=cars_in_cart)
 
-    # Вычислите общую стоимость машин в корзине
     total_price = sum(car.price for car in myitems)
 
     template = loader.get_template('payment.html')
@@ -159,7 +188,7 @@ def calculate_subtotal(cars_in_cart):
 
 
 def calculate_total_with_taxes(subtotal):
-    tax_rate = decimal.Decimal('0.1')  # Пример: ставка налога 10%
+    tax_rate = decimal.Decimal('0.1')
     total_with_taxes = subtotal * (1 + tax_rate)
     return total_with_taxes
 
@@ -194,17 +223,16 @@ def delete_car(request, car_id):
 
 @login_required
 def add_to_payment(request, car_id):
-    car_id = int(car_id)  # Убедитесь, что car_id числовой тип
+    car_id = int(car_id)
     cars_in_cart = request.session.get('cars_in_cart', [])
     cars_in_cart.append(car_id)
     request.session['cars_in_cart'] = cars_in_cart
 
-    # Получите подробности о машинах в cars_in_cart
     cars_in_cart_details = TouristPlace.objects.filter(pk__in=cars_in_cart)
     subtotal = calculate_subtotal(cars_in_cart)
     total = calculate_total_with_taxes(subtotal)
     context = {
-        'cars_in_cart': cars_in_cart_details,  # Передайте объекты машин в контекст
+        'cars_in_cart': cars_in_cart_details,
         'subtotal': subtotal,
         'total': total,
     }

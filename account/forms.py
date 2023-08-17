@@ -14,4 +14,4 @@ class CustomUserCreationForm(UserCreationForm):
 class CarForm(forms.ModelForm):
     class Meta:
         model = TouristPlace
-        fields = ('name', 'description', 'price')
+        fields = ('name', 'description', 'price', 'quantity', 'visibility')

@@ -13,6 +13,11 @@ class TouristPlace(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='cars/', blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
+    VISIBILITY_CHOICES = (
+        ('user', 'For User Only'),
+        ('all', 'For All Users'),
+    )
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='user')
 
     def __str__(self):
         return self.name

@@ -106,10 +106,9 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-<!--                        {% if user.is_superuser %}-->
-<!--                           <a href="{% url 'my_cars' %}" class="nav-item nav-link active">My cars</a>-->
-<!--                        {% endif %}-->
-                        <a href="{% url 'my_cars' %}" class="nav-item nav-link active">My cars</a>
+                        {% if user.is_superuser %}
+                           <a href="{% url 'my_cars' %}" class="nav-item nav-link active">My cars</a>
+                        {% endif %}
                         <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
                         <a href="{% url 'service' %}" class="nav-item nav-link">Services</a>
                         <a href="{% url 'package' %}" class="nav-item nav-link">Packages</a>
@@ -123,18 +122,12 @@
                                 <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Booking</a>
-                            <div class="dropdown-menu border-0 rounded-0 m-0">
-                                <a href="{% url 'car' %}" class="dropdown-item">Rent a car</a>
-                                <a href="{% url 'blog' %}" class="dropdown-item">Restaurant</a>
-                            </div>
-                        </div>
+                        <a href="{% url 'car' %}" class="nav-item nav-link">Rent a car</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Search</a>
                             <div class="dropdown-menu border-0 rounded-0 m-0">
                                 <form class="form-inline" action="{% url 'search_results' %}" method="GET">
-                                  <input class="form-control mr-sm-2" type="text" name="query" placeholder="Product name" aria-label="Search">
+                                  <input class="form-control mr-sm-2" type="text" name="query" placeholder="Search" aria-label="Search">
                                   <button class="btn nav_search-btn" type="submit">
                                     <i class="fa fa-search" aria-hidden="true"></i>
                                   </button>
@@ -188,7 +181,6 @@
     <a href="{% url 'index' %}" class="btn btn-success back">
         <i class="fas fa-arrow-left"></i> Back
     </a>
-    <!-- Другие элементы -->
 </div>
 
 
